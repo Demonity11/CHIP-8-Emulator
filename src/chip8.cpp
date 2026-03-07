@@ -1,4 +1,4 @@
-#include "chip8.h"
+#include "../include/chip8.h"
 
 void decode(Chip8& cpu, std::uint16_t opcode)
 {
@@ -38,7 +38,7 @@ std::uint16_t fetch(Chip8& cpu)
 
 int loadROM(Chip8& cpu, const std::string& filename) 
 {
-    std::ifstream file(filename, std::ios::binary | std::ios::ate);
+    std::ifstream file("../roms/" + filename, std::ios::binary | std::ios::ate);
 
     if (file.is_open()) {
         std::streampos fileSize = file.tellg();
