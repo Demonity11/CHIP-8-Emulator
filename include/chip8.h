@@ -14,7 +14,7 @@ struct Chip8
 	std::uint16_t I{};
 	std::uint16_t pc{0x200}; // program counter (pc): holds the memory address being executed
 	std::uint16_t stack[16]{}; // used to hold the value of the address to get back to
-	std::uint8_t sp{};
+	std::uint8_t sp{0x0};
 
 	std::uint8_t delayTimer{};
 	std::uint8_t soundTimer{};
@@ -33,5 +33,15 @@ void printROM(const Chip8& cpu, const std::string& filename, int fileSize);
 void op_00E0(Chip8& cpu, std::uint16_t opcode);
 void op_00EE(Chip8& cpu, std::uint16_t opcode);
 void op_Annn(Chip8& cpu, std::uint16_t opcode);
+void op_1nnn(Chip8& cpu, std::uint16_t opcode);
+void op_2nnn(Chip8& cpu, std::uint16_t opcode);
+void op_3xkk(Chip8& cpu, std::uint16_t opcode);
+void op_4xkk(Chip8& cpu, std::uint16_t opcode);
+void op_5xy0(Chip8& cpu, std::uint16_t opcode);
+void op_6xkk(Chip8& cpu, std::uint16_t opcode);
+void op_7xkk(Chip8& cpu, std::uint16_t opcode);
+void op_8xy0(Chip8& cpu, std::uint16_t opcode);
+void op_8xy1(Chip8& cpu, std::uint16_t opcode);
+void op_8xy2(Chip8& cpu, std::uint16_t opcode);
 
 #endif

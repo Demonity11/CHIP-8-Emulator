@@ -18,8 +18,13 @@ void decode(Chip8& cpu, std::uint16_t opcode)
             op_00EE(cpu, opcode);
 
         break;
+
     case 0xA:
         op_Annn(cpu, opcode);
+        break;
+
+    case 0x1:
+        op_1nnn(cpu, opcode);
         break;
     }
 }
