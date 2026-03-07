@@ -1,4 +1,5 @@
 #include "../include/chip8.h"
+#include "../include/Random.h"
 
 namespace Masks
 {
@@ -115,3 +116,112 @@ void op_8xy2(Chip8& cpu, std::uint16_t opcode)
 
 	cpu.V[x] = cpu.V[x] & cpu.V[y];
 }
+
+void op_8xy3(Chip8& cpu, std::uint16_t opcode)
+{
+	std::uint16_t x = (opcode & Masks::x) >> 8;
+	std::uint16_t y = (opcode & Masks::y) >> 4;
+
+	cpu.V[x] = cpu.V[x] ^ cpu.V[y];
+}
+
+void op_8xy4(Chip8& cpu, std::uint16_t opcode)
+{
+	std::uint16_t x = (opcode & Masks::x) >> 8;
+	std::uint16_t y = (opcode & Masks::y) >> 4;
+
+	std::uint16_t sum = cpu.V[x] + cpu.V[y];
+	// std::cout << "sum = 0x" << std::hex << std::uppercase << sum << "\n";
+
+	if (sum > 0xFF)
+	{
+		cpu.V[x] = static_cast<std::uint8_t>(sum & 0xFF);
+		cpu.V[0xF] = 1; 
+		// std::cout << "Vx = 0x" << std::hex << std::uppercase << static_cast<int>(cpu.V[x]) << "\n";
+
+		return;
+	}
+
+	cpu.V[x] = cpu.V[x] + cpu.V[y];
+	cpu.V[0xF] = 0;
+}
+
+void op_8xy5(Chip8& cpu, std::uint16_t opcode)
+{
+	std::uint16_t x = (opcode & Masks::x) >> 8;
+	std::uint16_t y = (opcode & Masks::y) >> 4;
+
+	if (cpu.V[x] >= cpu.V[y])
+		cpu.V[0xF] = 1;
+	else
+		cpu.V[0xF] = 0;
+
+	cpu.V[x] = cpu.V[x] - cpu.V[y];
+}
+
+void op_8xy6(Chip8& cpu, std::uint16_t opcode) // this instruction can cause undefined behavior since the community implement this in two different ways
+{
+	std::uint16_t x = (opcode & Masks::x) >> 8;
+	std::uint16_t y = (opcode & Masks::y) >> 4;
+
+	std::uint8_t leastBit = cpu.V[y] & 0x01;
+
+	cpu.V[x] = cpu.V[y] >> 1;
+	cpu.V[0xF] = leastBit;
+}
+
+void op_8xy7(Chip8& cpu, std::uint16_t opcode)
+{
+	std::uint16_t x = (opcode & Masks::x) >> 8;
+	std::uint16_t y = (opcode & Masks::y) >> 4;
+
+	if (cpu.V[y] >= cpu.V[x])
+		cpu.V[0xF] = 1;
+	else
+		cpu.V[0xF] = 0;
+
+	cpu.V[x] = cpu.V[y] - cpu.V[x];
+}
+
+void op_8xyE(Chip8& cpu, std::uint16_t opcode)
+{
+	std::uint16_t x = (opcode & Masks::x) >> 8;
+	std::uint16_t y = (opcode & Masks::y) >> 4;
+
+	if (static_cast<bool>(cpu.V[x] & 0x80))
+		cpu.V[0xF] = 1;
+	else
+		cpu.V[0xF] = 0;
+
+	cpu.V[x] = cpu.V[x] << 1;
+}
+
+void op_9xy0(Chip8& cpu, std::uint16_t opcode)
+{
+	std::uint16_t x = (opcode & Masks::x) >> 8;
+	std::uint16_t y = (opcode & Masks::y) >> 4;
+
+	if (cpu.V[x] != cpu.V[y])
+		cpu.pc += 2;
+}
+
+void op_Bnnn(Chip8& cpu, std::uint16_t opcode)
+{
+	std::uint16_t nnn = opcode & Masks::nnn;
+
+	cpu.pc = nnn + cpu.V[0x0];
+}
+
+void op_Cxkk(Chip8& cpu, std::uint16_t opcode)
+{
+	std::uint8_t randomNumber = Random::get(0, 255);
+	std::uint16_t x = (opcode & Masks::x) >> 8;
+	std::uint16_t kk = opcode & Masks::kk;
+	
+	cpu.V[x] = randomNumber & kk;
+}
+
+// void op_8xy2(Chip8& cpu, std::uint16_t opcode)
+// {
+	
+// }

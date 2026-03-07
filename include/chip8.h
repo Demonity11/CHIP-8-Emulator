@@ -43,5 +43,14 @@ void op_7xkk(Chip8& cpu, std::uint16_t opcode);
 void op_8xy0(Chip8& cpu, std::uint16_t opcode);
 void op_8xy1(Chip8& cpu, std::uint16_t opcode);
 void op_8xy2(Chip8& cpu, std::uint16_t opcode);
+void op_8xy3(Chip8& cpu, std::uint16_t opcode);
+void op_8xy4(Chip8& cpu, std::uint16_t opcode);
+void op_8xy5(Chip8& cpu, std::uint16_t opcode);
+void op_8xy6(Chip8& cpu, std::uint16_t opcode);
+void op_8xy7(Chip8& cpu, std::uint16_t opcode);
+void op_8xyE(Chip8& cpu, std::uint16_t opcode);
+void op_9xy0(Chip8& cpu, std::uint16_t opcode);
+void op_Bnnn(Chip8& cpu, std::uint16_t opcode);
+void op_Cxkk(Chip8& cpu, std::uint16_t opcode);
 
 #endif

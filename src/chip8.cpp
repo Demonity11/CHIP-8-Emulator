@@ -59,6 +59,8 @@ int loadROM(Chip8& cpu, const std::string& filename)
 
         return fileSize; // returns the file size
     }
+
+    return 1;
 }
 
 void printROM(const Chip8& cpu, const std::string& filename, int fileSize)
@@ -77,7 +79,7 @@ int main()
 
 	int fileSize { loadROM(cpu, filename) };
 
-    std::uint16_t opcode { fetch(cpu) };
+    std::uint16_t opcode{ fetch(cpu) };
 
     decode(cpu, opcode);
 
