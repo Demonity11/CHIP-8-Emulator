@@ -77,15 +77,17 @@ int main()
 	Chip8 cpu{};
     std::string filename{ "IBM Logo.ch8" };
 
-	int fileSize { loadROM(cpu, filename) };
+	int fileSize{ loadROM(cpu, filename) };
 
-    std::uint16_t opcode{ fetch(cpu) };
+    printROM(cpu, filename, fileSize);
 
-    decode(cpu, opcode);
+    // std::uint16_t opcode{ fetch(cpu) };
 
-    opcode = fetch(cpu);
+    // decode(cpu, opcode);
 
-    decode(cpu, opcode);
+    // opcode = fetch(cpu);
+
+    // decode(cpu, opcode);
 
 	return 0;
 }

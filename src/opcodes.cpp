@@ -3,35 +3,33 @@
 
 namespace Masks
 {
-	std::uint16_t nnn{ 0x0FFF }; // extracts the lower 12 bits
-	std::uint16_t n{ 0x000F }; // extracts the lower 4 bits
-	std::uint16_t x{ 0x0F00 }; // extracts the lower byte of the highbyte
-	std::uint16_t y{ 0x00F0 }; // extracts the higher byte of the lowbyte
-	std::uint16_t kk{0x00FF}; // extracts the lower 8 bits
+	constexpr std::uint16_t nnn{ 0x0FFF }; // extracts the lower 12 bits
+	constexpr std::uint16_t n{ 0x000F }; // extracts the lower 4 bits
+	constexpr std::uint16_t x{ 0x0F00 }; // extracts the lower byte of the highbyte
+	constexpr std::uint16_t y{ 0x00F0 }; // extracts the higher byte of the lowbyte
+	constexpr std::uint16_t kk{0x00FF}; // extracts the lower 8 bits
 }
 
 void op_00E0(Chip8& cpu, std::uint16_t opcode)
 {
-    std::cout << "0x00E0: CLS: Clear the display." << "\n";
+    std::fill(std::begin(cpu.display), std::end(cpu.display), 0);
 }
 
 void op_00EE(Chip8& cpu, std::uint16_t opcode)
 {
-    std::cout << "0x00EE: The interpreter sets the program counter to the address at the top of the stack, "
-			  << "then subtracts 1 from the stack pointer." << "\n";
 	cpu.pc = cpu.stack[cpu.sp--];
 }
 
 void op_Annn(Chip8& cpu, std::uint16_t opcode)
 {
     cpu.I = opcode & Masks::nnn;
-    std::cout << "I = " << cpu.I << "\n";
+    // std::cout << "I = " << cpu.I << "\n";
 }
 
 void op_1nnn(Chip8& cpu, std::uint16_t opcode)
 {
 	cpu.pc = opcode & Masks::nnn;
-	std::cout << "0x" << std::hex << std::uppercase << cpu.pc << "\n";
+	// std::cout << "0x" << std::hex << std::uppercase << cpu.pc << "\n";
 }
 
 void op_2nnn(Chip8& cpu, std::uint16_t opcode)
@@ -221,7 +219,39 @@ void op_Cxkk(Chip8& cpu, std::uint16_t opcode)
 	cpu.V[x] = randomNumber & kk;
 }
 
-// void op_8xy2(Chip8& cpu, std::uint16_t opcode)
-// {
-	
-// }
+void op_Dxyn(Chip8& cpu, std::uint16_t opcode) 
+{
+	std::uint16_t x = (opcode & Masks::x) >> 8;
+	std::uint16_t y = (opcode & Masks::y) >> 4;
+	std::uint16_t n = opcode & Masks::n;
+
+	cpu.pc = cpu.I;
+	std::uint8_t xCoordinate{};
+	std::uint8_t yCoordinate{};
+
+	for (int i{ cpu.pc }; i < cpu.pc + n; ++i)
+	{
+		xCoordinate = cpu.V[x];
+		yCoordinate = cpu.V[y];
+
+		cpu.display[(yCoordinate * 64) + xCoordinate] = cpu.memory[i];
+	}
+}
+
+void op_Ex9E(Chip8& cpu, std::uint16_t opcode)
+{
+	std::uint16_t x = (opcode & Masks::x) >> 8;
+	std::uint8_t key = cpu.V[x];
+
+	if (cpu.keypad[key])
+		cpu.pc += 2;
+}
+
+void op_ExA1(Chip8& cpu, std::uint16_t opcode)
+{
+	std::uint16_t x = (opcode & Masks::x) >> 8;
+	std::uint8_t key = cpu.V[x];
+
+	if (!cpu.keypad[key])
+		cpu.pc += 2;
+}

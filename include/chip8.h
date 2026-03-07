@@ -11,7 +11,7 @@ struct Chip8
 {
 	std::uint8_t memory[4096]{}; // most programs starts at 0x200 (512)
 	std::uint8_t V[16]{}; // general purpose 8-bit registers
-	std::uint16_t I{};
+	std::uint16_t I{}; // 
 	std::uint16_t pc{0x200}; // program counter (pc): holds the memory address being executed
 	std::uint16_t stack[16]{}; // used to hold the value of the address to get back to
 	std::uint8_t sp{0x0};
@@ -52,5 +52,8 @@ void op_8xyE(Chip8& cpu, std::uint16_t opcode);
 void op_9xy0(Chip8& cpu, std::uint16_t opcode);
 void op_Bnnn(Chip8& cpu, std::uint16_t opcode);
 void op_Cxkk(Chip8& cpu, std::uint16_t opcode);
+void op_Dxyn(Chip8& cpu, std::uint16_t opcode); // not finished
+void op_Ex9E(Chip8& cpu, std::uint16_t opcode);
+void op_ExA1(Chip8& cpu, std::uint16_t opcode);
 
 #endif
