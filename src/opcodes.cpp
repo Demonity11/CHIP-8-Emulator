@@ -221,6 +221,9 @@ void op_Cxkk(Chip8& cpu, std::uint16_t opcode)
 
 void op_Dxyn(Chip8& cpu, std::uint16_t opcode) 
 {	
+	const int screenWidth{ 64 };
+	const int screenHeight{ 32 };
+
 	std::uint16_t x = (opcode & Masks::x) >> 8;
 	std::uint16_t y = (opcode & Masks::y) >> 4;
 	std::uint16_t n = opcode & Masks::n;
@@ -235,29 +238,29 @@ void op_Dxyn(Chip8& cpu, std::uint16_t opcode)
 	// cpu.V[y] = 29;
 	// end of debug
 
-	cpu.V[0xF] = 0x00;
+	cpu.V[0xF] = 0x00; // VF begins at value 0
 
 	int xCoord{ cpu.V[x] };
 	int yCoord{ cpu.V[y] };
 
-	for (int j{ 0 }; j < n; ++j) // outer loop
+	for (int j{ 0 }; j < n; ++j) // this loop executes n times, where n is equal to sprite's height
 	{
-		if (yCoord > 31)
+		if (yCoord > screenHeight - 1) // checks if the next vertical pixel coordinates is out of the screen
 			continue;
 
-		int spriteInitialPos{ (64 * yCoord) + xCoord };
+		int spriteInitialPos{ (screenWidth * yCoord) + xCoord };
 
-		for (int i{ 0 }, shift{ 7 }; i < 8; ++i, --shift) // inner loop
+		for (int i{ 0 }, shift{ 7 }; i < 8; ++i, --shift) // this loop executes 8 times, which is the numbers of bits of a std::uint8_t
 		{
-			std::uint8_t bit = (cpu.memory[cpu.I + j] >> shift) & 0x01; 
+			std::uint8_t bit = (cpu.memory[cpu.I + j] >> shift) & 0x01; // isolate each individual bit
 
-			if (spriteInitialPos + i > 2047)
+			if (spriteInitialPos + i > (screenWidth * screenHeight) - 1) // checks if spriteInitialPos + i is bigger than the display's last index (2047)
 				continue;
 
-			if (xCoord + i > 63)
+			if (xCoord + i > screenWidth - 1) // checks if the next horizontal pixel coordinates is out of the screen
 				continue;
 
-			if ((cpu.display[spriteInitialPos + i] & 0x01) == 0x01 && (bit == 0x01))
+			if ((cpu.display[spriteInitialPos + i] & 0x01) == 0x01 && (bit == 0x01)) // if any pixel is erased, then VF is set to 1, otherwise 0
 				cpu.V[0xF] = 0x01;
 
 			cpu.display[spriteInitialPos + i] ^= bit;
@@ -265,7 +268,7 @@ void op_Dxyn(Chip8& cpu, std::uint16_t opcode)
 			// std::cout << static_cast<bool>(cpu.display[spriteInitialPos + i]) << " ";
 		}
 
-		yCoord += 1;
+		++yCoord;
 		// std::cout << "\n";
 	}
 }
