@@ -146,13 +146,15 @@ int main()
 
     // printROM(cpu, filename, fileSize);
 
-    std::uint16_t opcode{ fetch(cpu) };
+    // std::uint16_t opcode{ fetch(cpu) };
 
-    decode(cpu, opcode);
+    // decode(cpu, opcode);
 
-    opcode = fetch(cpu);
+    // opcode = fetch(cpu);
 
-    decode(cpu, opcode);
+    // decode(cpu, opcode);
+
+    op_Dxyn(cpu, 0xD235);
 
 	return 0;
 }

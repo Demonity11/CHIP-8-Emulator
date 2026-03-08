@@ -225,16 +225,40 @@ void op_Dxyn(Chip8& cpu, std::uint16_t opcode)
 	std::uint16_t y = (opcode & Masks::y) >> 4;
 	std::uint16_t n = opcode & Masks::n;
 
-	cpu.pc = cpu.I;
-	std::uint8_t xCoordinate{};
-	std::uint8_t yCoordinate{};
+	cpu.V[0xF] = 0x00;
 
-	for (int i{ cpu.pc }; i < cpu.pc + n; ++i)
+	int xCoord{ cpu.V[x] };
+	int yCoord{ cpu.V[y] };
+
+	for (int j{ 0 }; j < n; ++j) // outer loop
 	{
-		xCoordinate = cpu.V[x];
-		yCoordinate = cpu.V[y];
+		if (yCoord > 31)
+			return;
 
-		cpu.display[(yCoordinate * 64) + xCoordinate] = cpu.memory[i];
+		for (int i{ 0 }, shift{ 7 }; i < 8; ++i, --shift) // inner loop
+		{
+			std::uint8_t bit = (cpu.memory[cpu.I + j] >> shift) & 0x01; 
+
+			int spriteInitialPos{ (64 * yCoord) + xCoord };
+
+			if (spriteInitialPos + i > 2047)
+				return;
+
+			if (xCoord + i > 63)
+			{
+				std::cout << static_cast<bool>(cpu.display[((64 * yCoord) + xCoord) + i]) << " ";
+				continue;
+			}
+
+			if ((cpu.display[spriteInitialPos + i] & 0x01) == 0x01 && (bit == 0x01) && (cpu.V[0xF] == 0x00))
+				cpu.V[0xF] = 0x01;
+
+			cpu.display[spriteInitialPos + i] ^= bit;
+
+			std::cout << static_cast<bool>(cpu.display[spriteInitialPos + i]) << " ";
+		}
+
+		yCoord += 1;
 	}
 }
 
