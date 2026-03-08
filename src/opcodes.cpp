@@ -220,10 +220,20 @@ void op_Cxkk(Chip8& cpu, std::uint16_t opcode)
 }
 
 void op_Dxyn(Chip8& cpu, std::uint16_t opcode) 
-{
+{	
 	std::uint16_t x = (opcode & Masks::x) >> 8;
 	std::uint16_t y = (opcode & Masks::y) >> 4;
 	std::uint16_t n = opcode & Masks::n;
+
+	// debug lines
+	// cpu.memory[cpu.I]     = 0xF0; // sprite 0 values
+	// cpu.memory[cpu.I + 1] = 0x90;
+	// cpu.memory[cpu.I + 2] = 0x90;
+	// cpu.memory[cpu.I + 3] = 0x90;
+	// cpu.memory[cpu.I + 4] = 0xF0;
+	// cpu.V[x] = 30;
+	// cpu.V[y] = 29;
+	// end of debug
 
 	cpu.V[0xF] = 0x00;
 
@@ -233,27 +243,30 @@ void op_Dxyn(Chip8& cpu, std::uint16_t opcode)
 	for (int j{ 0 }; j < n; ++j) // outer loop
 	{
 		if (yCoord > 31)
-			return;
+			continue;
+
+		int spriteInitialPos{ (64 * yCoord) + xCoord };
 
 		for (int i{ 0 }, shift{ 7 }; i < 8; ++i, --shift) // inner loop
 		{
 			std::uint8_t bit = (cpu.memory[cpu.I + j] >> shift) & 0x01; 
 
-			int spriteInitialPos{ (64 * yCoord) + xCoord };
-
 			if (spriteInitialPos + i > 2047)
-				return;
+				continue;
 
 			if (xCoord + i > 63)
 				continue;
 
-			if ((cpu.display[spriteInitialPos + i] & 0x01) == 0x01 && (bit == 0x01) && (cpu.V[0xF] == 0x00))
+			if ((cpu.display[spriteInitialPos + i] & 0x01) == 0x01 && (bit == 0x01))
 				cpu.V[0xF] = 0x01;
 
 			cpu.display[spriteInitialPos + i] ^= bit;
+
+			// std::cout << static_cast<bool>(cpu.display[spriteInitialPos + i]) << " ";
 		}
 
 		yCoord += 1;
+		// std::cout << "\n";
 	}
 }
 

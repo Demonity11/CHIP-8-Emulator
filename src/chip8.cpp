@@ -154,7 +154,7 @@ int main()
 
     // decode(cpu, opcode);
 
-    op_Dxyn(cpu, 0xD235);
+    op_Dxyn(cpu, 0xD225);
 
 	return 0;
 }
