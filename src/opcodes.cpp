@@ -243,7 +243,7 @@ void op_Ex9E(Chip8& cpu, std::uint16_t opcode)
 	std::uint16_t x = (opcode & Masks::x) >> 8;
 	std::uint8_t key = cpu.V[x];
 
-	if (cpu.keypad[key])
+	if (key < 16 && cpu.keypad[key])
 		cpu.pc += 2;
 }
 
@@ -252,6 +252,6 @@ void op_ExA1(Chip8& cpu, std::uint16_t opcode)
 	std::uint16_t x = (opcode & Masks::x) >> 8;
 	std::uint8_t key = cpu.V[x];
 
-	if (!cpu.keypad[key])
+	if (key < 16 && !cpu.keypad[key])
 		cpu.pc += 2;
 }
