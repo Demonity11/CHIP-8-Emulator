@@ -5,11 +5,6 @@ void decode(Chip8& cpu, std::uint16_t opcode)
     std::uint16_t firstNibble = (opcode >> 12) & 0x000F;
     std::uint16_t lastNibble = opcode & 0x000F;
 
-    std::cout << "opcode = 0x" << std::hex << std::uppercase << std::setw(4) << std::setfill('0') << opcode << "\n";
-
-    std::cout << "first nibble = 0x" << std::hex << firstNibble << "\n\n";
-    std::cout << "last nibble = 0x" << std::hex << lastNibble << "\n\n";
-
     switch (firstNibble)
     {
     case 0x0:
@@ -64,7 +59,7 @@ void decode(Chip8& cpu, std::uint16_t opcode)
 
     case 0xC: op_Cxkk(cpu, opcode); break;
 
-    // case 0xD: op_Dxyn(cpu, opcode); break;
+    case 0xD: op_Dxyn(cpu, opcode); break;
     
     case 0xE:
         if (lastNibble == 0xE) op_Ex9E(cpu, opcode);
@@ -101,7 +96,11 @@ std::uint16_t fetch(Chip8& cpu)
     
     std::uint16_t opcode = highByte | lowByte;
 
+    // std::cout << "opcode = 0x" << std::hex << std::uppercase << std::setw(4) << std::setfill('0') << opcode << "\n";
+    
     cpu.pc += 2;
+    
+    // std::cout << "pc = 0x" << std::hex << std::uppercase << cpu.pc << "\n\n"; 
 
     return opcode;
 }
@@ -132,8 +131,18 @@ void printROM(const Chip8& cpu, const std::string& filename, int fileSize)
 {
     for (int i{ 0x200 }; i < 0x200 + fileSize; i += 2)
     {
-        std::cout << "Opcode: 0x" << std::hex << std::uppercase << std::setw(4) 
+        std::cout << "opcode: 0x" << std::hex << std::uppercase << std::setw(4) 
                   << std::setfill('0') << static_cast<std::uint16_t>((cpu.memory[i] << 8) | cpu.memory[i + 1]) << "\n";
+    }
+}
+
+void printDisplay(const Chip8& cpu)
+{
+    for (int i{ 0 }; i < 2048; ++i)
+    {
+        std::cout << (static_cast<bool>(cpu.display[i]) == 1 ? "#" : " ");
+        if ((i + 1) % 64 == 0)
+            std::cout << "\n";
     }
 }
 
@@ -145,16 +154,13 @@ int main()
 	int fileSize{ loadROM(cpu, filename) };
 
     // printROM(cpu, filename, fileSize);
+    for (int i{ 0x200 }; i < 0x200 + fileSize; i += 2)
+    {
+        std::uint16_t opcode = fetch(cpu);
+        decode(cpu, opcode);
+    }
 
-    // std::uint16_t opcode{ fetch(cpu) };
-
-    // decode(cpu, opcode);
-
-    // opcode = fetch(cpu);
-
-    // decode(cpu, opcode);
-
-    op_Dxyn(cpu, 0xD225);
+    printDisplay(cpu);
 
 	return 0;
 }

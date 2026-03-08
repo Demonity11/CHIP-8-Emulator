@@ -299,7 +299,7 @@ void op_Fx07(Chip8& cpu, std::uint16_t opcode)
 
 void op_Fx0A(Chip8& cpu, std::uint16_t opcode)
 {
-	
+	std::cout << "not finished\n";
 }
 
 void op_Fx15(Chip8& cpu, std::uint16_t opcode)

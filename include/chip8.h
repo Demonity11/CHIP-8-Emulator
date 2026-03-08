@@ -53,11 +53,11 @@ void op_8xyE(Chip8& cpu, std::uint16_t opcode);
 void op_9xy0(Chip8& cpu, std::uint16_t opcode);
 void op_Bnnn(Chip8& cpu, std::uint16_t opcode);
 void op_Cxkk(Chip8& cpu, std::uint16_t opcode);
-void op_Dxyn(Chip8& cpu, std::uint16_t opcode); // not finished
+void op_Dxyn(Chip8& cpu, std::uint16_t opcode);
 void op_Ex9E(Chip8& cpu, std::uint16_t opcode);
 void op_ExA1(Chip8& cpu, std::uint16_t opcode);
 void op_Fx07(Chip8& cpu, std::uint16_t opcode);
-void op_Fx0A(Chip8& cpu, std::uint16_t opcode); // do later
+void op_Fx0A(Chip8& cpu, std::uint16_t opcode); // not finished
 void op_Fx15(Chip8& cpu, std::uint16_t opcode);
 void op_Fx18(Chip8& cpu, std::uint16_t opcode);
 void op_Fx1E(Chip8& cpu, std::uint16_t opcode);
