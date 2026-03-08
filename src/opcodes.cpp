@@ -255,3 +255,74 @@ void op_ExA1(Chip8& cpu, std::uint16_t opcode)
 	if (key < 16 && !cpu.keypad[key])
 		cpu.pc += 2;
 }
+
+void op_Fx07(Chip8& cpu, std::uint16_t opcode)
+{
+	std::uint16_t x = (opcode & Masks::x) >> 8;
+	cpu.V[x] = cpu.delayTimer;
+}
+
+void op_Fx0A(Chip8& cpu, std::uint16_t opcode)
+{
+	
+}
+
+void op_Fx15(Chip8& cpu, std::uint16_t opcode)
+{
+	std::uint16_t x = (opcode & Masks::x) >> 8;
+	cpu.delayTimer = cpu.V[x];
+}
+
+void op_Fx18(Chip8& cpu, std::uint16_t opcode)
+{
+	std::uint16_t x = (opcode & Masks::x) >> 8;
+	cpu.soundTimer = cpu.V[x];
+}
+
+void op_Fx1E(Chip8& cpu, std::uint16_t opcode)
+{
+	std::uint16_t x = (opcode & Masks::x) >> 8;
+	cpu.I += cpu.V[x];
+}
+
+void op_Fx29(Chip8& cpu, std::uint16_t opcode)
+{
+	std::uint16_t x = (opcode & Masks::x) >> 8;
+	cpu.I = cpu.V[x];
+}
+
+void op_Fx33(Chip8& cpu, std::uint16_t opcode)
+{
+	std::uint16_t x = (opcode & Masks::x) >> 8;
+
+	std::uint8_t number = cpu.V[x];
+
+	for (int digitCounter{ 2 }; digitCounter >= 0; --digitCounter)
+	{
+		std::uint8_t digit = number % 10; 
+
+		cpu.memory[cpu.I + digitCounter] = digit; // get the digits in backwards order, so we store backwards
+
+		number = (number - digit) / 10;
+	}
+}
+
+void op_Fx55(Chip8& cpu, std::uint16_t opcode)
+{
+	std::uint16_t x = (opcode & Masks::x) >> 8;
+
+	for (int i{ 0 }; i <= x; ++i)
+	{
+		cpu.memory[cpu.I + i] = cpu.V[i];
+	}
+}
+
+void op_Fx65(Chip8& cpu, std::uint16_t opcode)
+{
+	std::uint16_t x = (opcode & Masks::x) >> 8;
+
+	for (int i{ 0 }; i <= x; ++i)
+	{
+		cpu.V[i] = cpu.memory[cpu.I + i];
+	}
+}

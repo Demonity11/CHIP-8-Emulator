@@ -5,6 +5,7 @@
 #include <iostream>
 #include <iomanip>
 #include <string>
+#include <string_view>
 #include <fstream>
 
 struct Chip8
@@ -55,5 +56,14 @@ void op_Cxkk(Chip8& cpu, std::uint16_t opcode);
 void op_Dxyn(Chip8& cpu, std::uint16_t opcode); // not finished
 void op_Ex9E(Chip8& cpu, std::uint16_t opcode);
 void op_ExA1(Chip8& cpu, std::uint16_t opcode);
+void op_Fx07(Chip8& cpu, std::uint16_t opcode);
+void op_Fx0A(Chip8& cpu, std::uint16_t opcode); // do later
+void op_Fx15(Chip8& cpu, std::uint16_t opcode);
+void op_Fx18(Chip8& cpu, std::uint16_t opcode);
+void op_Fx1E(Chip8& cpu, std::uint16_t opcode);
+void op_Fx29(Chip8& cpu, std::uint16_t opcode);
+void op_Fx33(Chip8& cpu, std::uint16_t opcode);
+void op_Fx55(Chip8& cpu, std::uint16_t opcode);
+void op_Fx65(Chip8& cpu, std::uint16_t opcode);
 
 #endif
