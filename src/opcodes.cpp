@@ -245,17 +245,12 @@ void op_Dxyn(Chip8& cpu, std::uint16_t opcode)
 				return;
 
 			if (xCoord + i > 63)
-			{
-				std::cout << static_cast<bool>(cpu.display[((64 * yCoord) + xCoord) + i]) << " ";
 				continue;
-			}
 
 			if ((cpu.display[spriteInitialPos + i] & 0x01) == 0x01 && (bit == 0x01) && (cpu.V[0xF] == 0x00))
 				cpu.V[0xF] = 0x01;
 
 			cpu.display[spriteInitialPos + i] ^= bit;
-
-			std::cout << static_cast<bool>(cpu.display[spriteInitialPos + i]) << " ";
 		}
 
 		yCoord += 1;
