@@ -91,7 +91,9 @@ void decode(Chip8& cpu, std::uint16_t opcode)
         case 0x0A: op_Fx0A(cpu, opcode); break;
 
         case 0x15: op_Fx15(cpu, opcode); break;
+
         case 0x55: op_Fx55(cpu, opcode); break;
+
         case 0x65: op_Fx65(cpu, opcode); break;
 
         case 0x18: op_Fx18(cpu, opcode); break;
@@ -105,37 +107,59 @@ void decode(Chip8& cpu, std::uint16_t opcode)
     }
 }
 
-int loadROM(Chip8& cpu, const std::string& filename) 
+void clearMemory(Chip8& cpu) // before loading another rom, we want to clear the memory
 {
+    std::fill(std::begin(cpu.memory), std::end(cpu.memory), 0);
+}
+
+int loadROM(Chip8& cpu, const std::string& filename) // loads the rom into memory
+{
+    const int romAddress{ 0x200 };
+
+    if (cpu.memory[romAddress + 1] != 0x00) // clears the memory if a file is already loaded into memory
+        clearMemory(cpu);
+
     std::ifstream file("../roms/" + filename, std::ios::binary | std::ios::ate);
 
-    if (file.is_open()) {
+    if (file.is_open()) 
+    {
         std::streampos fileSize = file.tellg();
         file.seekg(0, std::ios::beg);
 
-        if (fileSize > (4096 - 512)) {
+        if (fileSize > (4096 - 512)) // if the file being read is bigger than the available space in memory, then we don't want to load in the memory
+        {
             std::cerr << "Error. ROM's size is bigger than the available space.\n";
+            return -1;
         }
 
-        file.read(reinterpret_cast<char*>(&cpu.memory[0x200]), fileSize);
+        file.read(reinterpret_cast<char*>(&cpu.memory[romAddress]), fileSize);
 
         file.close();
 
-        return fileSize; // returns the file size
+        return fileSize; // returns the file's size
     }
 
-    return 1;
+    std::cerr << "Error. File not loaded into memory.\n";
+
+    return -1; 
 }
 
-void printROM(const Chip8& cpu, int fileSize) // print all opcodes loaded into memory from a determined file
+void printROM(const Chip8& cpu, int fileSize) // print all opcodes loaded into memory
 {
-    int romAddress{ 0x200 };
+    if (fileSize == -1) // if fileSize = -1, then there was an error when loading the file into memory
+    {
+        std::cerr << "Error. A file is not loaded into memory.\n";
+        return;
+    }
+
+    const int romAddress{ 0x200 }; // roms are loaded from 0x200 onward in chip8
 
     for (int i{ romAddress }; i < romAddress + fileSize; i += 2)
     {
         std::uint16_t opcode = (cpu.memory[i] << 8) | cpu.memory[i + 1];
 
-        std::cout << "opcode: 0x" << std::hex << std::uppercase << std::setw(4) << std::setfill('0') << opcode << "\n";
+        std::cout << "opcode: 0x" << std::hex << std::uppercase << std::setw(4) << std::setfill('0') << opcode;
+        std::cout << " address: 0x" << std::hex << std::uppercase << std::setw(3) << std::setfill('0') << i << "\n";
     }
 }
 
@@ -146,9 +170,9 @@ void printDisplay(const Chip8& cpu) // print the contents of the display array
     for (int i{ 0 }; i < displaySize; ++i)
     {
         std::cout << (static_cast<bool>(cpu.display[i]) == 1 ? "#" : " ");
-        
+
         if ((i + 1) % 64 == 0)
-            std::cout << "\n";
+            std::cout << "\n"; // ends line when each row is printed
     }
 }
 
@@ -168,6 +192,8 @@ int main()
     }
 
     // printDisplay(cpu);
+
+    loadROM(cpu, "???");
 
 	return 0;
 }
