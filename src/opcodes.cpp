@@ -15,9 +15,12 @@ void op_00E0(Chip8& cpu, std::uint16_t opcode)
     std::fill(std::begin(cpu.display), std::end(cpu.display), 0);
 }
 
-void op_00EE(Chip8& cpu, std::uint16_t opcode)
-{
-	cpu.pc = cpu.stack[cpu.sp--];
+void op_00EE(Chip8& cpu, std::uint16_t opcode) {
+    if (cpu.sp > 0) 
+	{
+        --cpu.sp;
+        cpu.pc = cpu.stack[cpu.sp];
+    } 
 }
 
 void op_Annn(Chip8& cpu, std::uint16_t opcode)
@@ -32,10 +35,13 @@ void op_1nnn(Chip8& cpu, std::uint16_t opcode)
 	// std::cout << "0x" << std::hex << std::uppercase << cpu.pc << "\n";
 }
 
-void op_2nnn(Chip8& cpu, std::uint16_t opcode)
-{
-	cpu.stack[cpu.sp++] = cpu.pc;
-	cpu.pc = opcode & Masks::nnn;
+void op_2nnn(Chip8& cpu, std::uint16_t opcode) {
+    if (cpu.sp < 15) 
+	{ 
+        cpu.stack[cpu.sp] = cpu.pc;
+        ++cpu.sp;
+        cpu.pc = opcode & Masks::nnn;
+    } 
 }
 
 void op_3xkk(Chip8& cpu, std::uint16_t opcode)
@@ -323,7 +329,7 @@ void op_Fx1E(Chip8& cpu, std::uint16_t opcode)
 void op_Fx29(Chip8& cpu, std::uint16_t opcode)
 {
 	std::uint16_t x = (opcode & Masks::x) >> 8;
-	cpu.I = cpu.V[x];
+	cpu.I = 0x50 + (cpu.V[x] * 5);
 }
 
 void op_Fx33(Chip8& cpu, std::uint16_t opcode)

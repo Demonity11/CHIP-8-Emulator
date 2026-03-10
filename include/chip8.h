@@ -7,7 +7,7 @@
 #include <string>
 #include <fstream>
 
-struct Chip8
+struct Chip8 // the chip 8 cpu works at a clock of 500 instructions per second (500 Hz)
 {
 	std::uint8_t memory[4096]{}; // most programs starts at 0x200 (512)
 	std::uint8_t V[16]{}; // general purpose 8-bit registers
@@ -16,17 +16,19 @@ struct Chip8
 	std::uint16_t stack[16]{}; // used to hold the value of the address to get back to when a routine is finished
 	std::uint8_t sp{}; // used to hold the address of the top level of the stack
 
-	std::uint8_t delayTimer{};
-	std::uint8_t soundTimer{};
+	std::uint8_t delayTimer{}; // decrements 60 times per second (60 Hz)
+	std::uint8_t soundTimer{}; // decrements at a frequency established by the programmer (me). not defined yet 
 
 	std::uint8_t display[64 * 32]{}; // a 64x32 display represented by an array of size 2048
-	std::uint8_t keypad[16]{}; // a 16-key keypad, represented by hexadecimal numbers, from 0 to F
+	std::uint8_t keypad[16]{0x0, 0x1, 0x2, 0x3, 0x4, 0x5, 0x6, 0x7, 0x8, 0x9, 0xA, 0xB, 0xC, 0xD, 0xE, 0xF}; 
+	// a 16-key keypad, represented by hexadecimal numbers, from 0 to F
 };
 
 // forward declarations for "chip8.cpp"
 auto decode(Chip8& cpu, std::uint16_t opcode)         -> void;
 auto fetch(Chip8& cpu) 								  -> std::uint16_t;
 auto loadROM(Chip8& cpu, const std::string& filename) -> int;
+auto loadFontSprites(Chip8& cpu)                      -> void;
 auto clearMemory(Chip8& cpu) 						  -> void;
 auto printROM(const Chip8& cpu, int fileSize) 		  -> void;
 auto printDisplay(const Chip8& cpu) 				  -> void;

@@ -1,5 +1,22 @@
 #include "../include/chip8.h"
 
+constexpr std::uint8_t fontSet[]{0xF0, 0x90, 0x90, 0x90, 0xF0,  // 0
+								 0x20, 0x60, 0x20, 0x20, 0x70,  // 1
+								 0xF0, 0x10, 0xF0, 0x80, 0xF0,  // 2
+								 0xF0, 0x10, 0xF0, 0x10, 0xF0,  // 3
+								 0x90, 0x90, 0xF0, 0x10, 0x10,  // 4
+								 0xF0, 0x80, 0xF0, 0x10, 0xF0,  // 5
+								 0xF0, 0x80, 0xF0, 0x90, 0xF0,  // 6
+								 0xF0, 0x10, 0x20, 0x40, 0x40,  // 7
+								 0xF0, 0x90, 0xF0, 0x90, 0xF0,  // 8
+								 0xF0, 0x90, 0xF0, 0x10, 0xF0,  // 9
+								 0xF0, 0x90, 0xF0, 0x90, 0x90,  // A
+								 0xE0, 0x90, 0xE0, 0x90, 0xE0,  // B
+								 0xF0, 0x80, 0x80, 0x80, 0xF0,  // C
+								 0xE0, 0x90, 0x90, 0x90, 0xE0,  // D
+								 0xF0, 0x80, 0xF0, 0x80, 0xF0,  // E
+								 0xF0, 0x80, 0xF0, 0x80, 0x80}; // F
+
 std::uint16_t fetch(Chip8& cpu)
 {
     std::uint16_t highByte = (cpu.memory[cpu.pc] << 8);
@@ -112,6 +129,24 @@ void clearMemory(Chip8& cpu) // before loading another rom, we want to clear the
     std::fill(std::begin(cpu.memory), std::end(cpu.memory), 0);
 }
 
+void loadFontSprites(Chip8& cpu)
+{
+    const int fontInitialAddress{ 0x50 };
+
+    if (cpu.memory[fontInitialAddress] != 0x00)
+    {
+        std::cerr << "Error. Font sprites can only be loaded one time.\n";
+        return;
+    }
+
+    for (int i{ 0 }; i < 80; ++i) // 80 is the size of the fontSet array
+    {
+        cpu.memory[fontInitialAddress + i] = fontSet[i];
+    }
+
+    std::cout << "Font sprites loaded into memory.\n";
+}
+
 int loadROM(Chip8& cpu, const std::string& filename) // loads the rom into memory
 {
     const int romAddress{ 0x200 };
@@ -135,6 +170,8 @@ int loadROM(Chip8& cpu, const std::string& filename) // loads the rom into memor
         file.read(reinterpret_cast<char*>(&cpu.memory[romAddress]), fileSize);
 
         file.close();
+
+        std::cout << filename << " was successfully loaded into memory.\n";
 
         return fileSize; // returns the file's size
     }
@@ -191,7 +228,9 @@ int main()
         decode(cpu, opcode);
     }
 
-    // printDisplay(cpu);
+    loadFontSprites(cpu);
+
+    printDisplay(cpu);
 
     loadROM(cpu, "???");
 
