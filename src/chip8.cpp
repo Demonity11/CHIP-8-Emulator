@@ -1,5 +1,21 @@
 #include "../include/chip8.h"
 
+std::uint16_t fetch(Chip8& cpu)
+{
+    std::uint16_t highByte = (cpu.memory[cpu.pc] << 8);
+    std::uint16_t lowByte = cpu.memory[cpu.pc + 1];
+    
+    std::uint16_t opcode = highByte | lowByte;
+
+    // std::cout << "opcode = 0x" << std::hex << std::uppercase << std::setw(4) << std::setfill('0') << opcode << "\n";
+    
+    cpu.pc += 2;
+    
+    // std::cout << "pc = 0x" << std::hex << std::uppercase << cpu.pc << "\n\n"; 
+
+    return opcode;
+}
+
 void decode(Chip8& cpu, std::uint16_t opcode)
 {
     std::uint16_t firstNibble = (opcode >> 12) & 0x000F;
@@ -89,22 +105,6 @@ void decode(Chip8& cpu, std::uint16_t opcode)
     }
 }
 
-std::uint16_t fetch(Chip8& cpu)
-{
-    std::uint16_t highByte = (cpu.memory[cpu.pc] << 8);
-    std::uint16_t lowByte = cpu.memory[cpu.pc + 1];
-    
-    std::uint16_t opcode = highByte | lowByte;
-
-    // std::cout << "opcode = 0x" << std::hex << std::uppercase << std::setw(4) << std::setfill('0') << opcode << "\n";
-    
-    cpu.pc += 2;
-    
-    // std::cout << "pc = 0x" << std::hex << std::uppercase << cpu.pc << "\n\n"; 
-
-    return opcode;
-}
-
 int loadROM(Chip8& cpu, const std::string& filename) 
 {
     std::ifstream file("../roms/" + filename, std::ios::binary | std::ios::ate);
@@ -127,20 +127,26 @@ int loadROM(Chip8& cpu, const std::string& filename)
     return 1;
 }
 
-void printROM(const Chip8& cpu, const std::string& filename, int fileSize)
+void printROM(const Chip8& cpu, int fileSize) // print all opcodes loaded into memory from a determined file
 {
-    for (int i{ 0x200 }; i < 0x200 + fileSize; i += 2)
+    int romAddress{ 0x200 };
+
+    for (int i{ romAddress }; i < romAddress + fileSize; i += 2)
     {
-        std::cout << "opcode: 0x" << std::hex << std::uppercase << std::setw(4) 
-                  << std::setfill('0') << static_cast<std::uint16_t>((cpu.memory[i] << 8) | cpu.memory[i + 1]) << "\n";
+        std::uint16_t opcode = (cpu.memory[i] << 8) | cpu.memory[i + 1];
+
+        std::cout << "opcode: 0x" << std::hex << std::uppercase << std::setw(4) << std::setfill('0') << opcode << "\n";
     }
 }
 
-void printDisplay(const Chip8& cpu)
+void printDisplay(const Chip8& cpu) // print the contents of the display array
 {
-    for (int i{ 0 }; i < 2048; ++i)
+    const int displaySize{ 64 * 32 };
+
+    for (int i{ 0 }; i < displaySize; ++i)
     {
         std::cout << (static_cast<bool>(cpu.display[i]) == 1 ? "#" : " ");
+        
         if ((i + 1) % 64 == 0)
             std::cout << "\n";
     }
@@ -153,14 +159,15 @@ int main()
 
 	int fileSize{ loadROM(cpu, filename) };
 
-    // printROM(cpu, filename, fileSize);
+    printROM(cpu, fileSize);
+
     for (int i{ 0x200 }; i < 0x200 + fileSize; i += 2)
     {
         std::uint16_t opcode = fetch(cpu);
         decode(cpu, opcode);
     }
 
-    printDisplay(cpu);
+    // printDisplay(cpu);
 
 	return 0;
 }

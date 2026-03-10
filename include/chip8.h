@@ -5,30 +5,30 @@
 #include <iostream>
 #include <iomanip>
 #include <string>
-#include <string_view>
 #include <fstream>
 
 struct Chip8
 {
 	std::uint8_t memory[4096]{}; // most programs starts at 0x200 (512)
 	std::uint8_t V[16]{}; // general purpose 8-bit registers
-	std::uint16_t I{}; // 
+	std::uint16_t I{}; // used to store addresses
 	std::uint16_t pc{0x200}; // program counter (pc): holds the memory address being executed
 	std::uint16_t stack[16]{}; // used to hold the value of the address to get back to
-	std::uint8_t sp{0x0};
+	std::uint8_t sp{}; // used to hold the address of the top level of the stack
 
 	std::uint8_t delayTimer{};
 	std::uint8_t soundTimer{};
 
-	std::uint8_t display[64 * 32]{};
-	std::uint8_t keypad[16]{};
+	std::uint8_t display[64 * 32]{}; // a 64x32 display represented by an array of size 2048
+	std::uint8_t keypad[16]{}; // a 16-key keypad, represented by hexadecimal numbers, from 0 to F
 };
 
 // forward declarations for "chip8.cpp"
-void decode(Chip8& cpu, std::uint16_t opcode);
-std::uint16_t fetch(Chip8& cpu);
-int loadROM(Chip8& cpu, const std::string& filename);
-void printROM(const Chip8& cpu, const std::string& filename, int fileSize);
+auto decode(Chip8& cpu, std::uint16_t opcode) -> void;
+auto fetch(Chip8& cpu) -> std::uint16_t;
+auto loadROM(Chip8& cpu, const std::string& filename) -> int;
+auto printROM(const Chip8& cpu, int fileSize) -> void;
+auto printDisplay(const Chip8& cpu) -> void;
 
 // forward declarations for "opcodes.cpp"
 void op_00E0(Chip8& cpu, std::uint16_t opcode);
