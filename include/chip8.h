@@ -32,6 +32,7 @@ auto loadFontSprites(Chip8& cpu)                      -> void;
 auto clearMemory(Chip8& cpu) 						  -> void;
 auto printROM(const Chip8& cpu, int fileSize) 		  -> void;
 auto printDisplay(const Chip8& cpu) 				  -> void;
+auto init(std::string romName) 						  -> Chip8;
 
 // forward declarations for "opcodes.cpp"
 void op_00E0(Chip8& cpu, std::uint16_t opcode);

@@ -206,33 +206,20 @@ void printDisplay(const Chip8& cpu) // print the contents of the display array
 
     for (int i{ 0 }; i < displaySize; ++i)
     {
-        std::cout << (static_cast<bool>(cpu.display[i]) == 1 ? "#" : " ");
+        std::cout << (cpu.display[i] == 1 ? static_cast<char>(219) : ' '); // 219 = █ in ASCII Table
 
         if ((i + 1) % 64 == 0)
             std::cout << "\n"; // ends line when each row is printed
     }
 }
 
-int main()
+Chip8 init(std::string romName)
 {
-	Chip8 cpu{};
-    std::string filename{ "IBM Logo.ch8" };
-
-	int fileSize{ loadROM(cpu, filename) };
-
-    printROM(cpu, fileSize);
-
-    for (int i{ 0x200 }; i < 0x200 + fileSize; i += 2)
-    {
-        std::uint16_t opcode = fetch(cpu);
-        decode(cpu, opcode);
-    }
+    Chip8 cpu{};
+    
+	loadROM(cpu, romName);
 
     loadFontSprites(cpu);
 
-    printDisplay(cpu);
-
-    loadROM(cpu, "???");
-
-	return 0;
+    return cpu;
 }
