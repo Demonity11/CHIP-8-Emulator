@@ -200,6 +200,40 @@ void printROM(const Chip8& cpu, int fileSize) // print all opcodes loaded into m
     }
 }
 
+std::vector<std::uint8_t> getDisplay(const Chip8& cpu)
+{   
+    std::vector<std::uint8_t> display(64 * 32 * 4);
+
+    for (int i{ 0 }; i < 64 * 32; ++i)
+    {
+        if (cpu.display[i] == 1)
+        {
+            display[i * 4] = 255;
+            display[i * 4 + 1] = 255;
+            display[i * 4 + 2] = 255;
+            display[i * 4 + 3] = 255;
+        }
+
+        if (cpu.display[i] == 0)
+        {
+            display[i * 4] = 0;
+            display[i * 4 + 1] = 0;
+            display[i * 4 + 2] = 0;
+            display[i * 4 + 3] = 255;
+        }
+    }
+
+    // for (int i{ 0 }; i < 64 * 32; ++i)
+    // {
+    //     std::cout << (display.at(i*4) == 255 ? static_cast<char>(219) : ' '); // 219 = █ in ASCII Table
+
+    //     if ((i + 1) % 64 == 0)
+    //         std::cout << "\n"; // ends line when each row is printed
+    // }
+
+    return display;
+}
+
 void printDisplay(const Chip8& cpu) // print the contents of the display array
 {
     const int displaySize{ 64 * 32 };
@@ -223,3 +257,18 @@ Chip8 init(std::string romName)
 
     return cpu;
 }
+
+// int main()
+// {
+//     Chip8 cpu{ init("IBM Logo.ch8") };
+
+//     for (int i{0}; i < 200; ++i)
+//     {
+//         auto opcode = fetch(cpu);
+//         decode(cpu, opcode);
+//     }
+
+//     std::vector<std::uint8_t> display{ getDisplay(cpu) };
+
+//     return 0;
+// }

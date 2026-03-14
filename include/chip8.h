@@ -6,6 +6,7 @@
 #include <iomanip>
 #include <string>
 #include <fstream>
+#include <vector>
 
 struct Chip8 // the chip 8 cpu works at a clock of 500 instructions per second (500 Hz)
 {
@@ -25,14 +26,15 @@ struct Chip8 // the chip 8 cpu works at a clock of 500 instructions per second (
 };
 
 // forward declarations for "chip8.cpp"
-auto decode(Chip8& cpu, std::uint16_t opcode)         -> void;
-auto fetch(Chip8& cpu) 								  -> std::uint16_t;
-auto loadROM(Chip8& cpu, const std::string& filename) -> int;
-auto loadFontSprites(Chip8& cpu)                      -> void;
-auto clearMemory(Chip8& cpu) 						  -> void;
-auto printROM(const Chip8& cpu, int fileSize) 		  -> void;
-auto printDisplay(const Chip8& cpu) 				  -> void;
-auto init(std::string romName) 						  -> Chip8;
+auto decode(Chip8& cpu, std::uint16_t opcode)         				 -> void;
+auto fetch(Chip8& cpu) 								  				 -> std::uint16_t;
+auto loadROM(Chip8& cpu, const std::string& filename) 				 -> int;
+auto loadFontSprites(Chip8& cpu)                      				 -> void;
+auto clearMemory(Chip8& cpu) 						  				 -> void;
+auto printROM(const Chip8& cpu, int fileSize) 		  				 -> void;
+auto printDisplay(const Chip8& cpu) 				  				 -> void;
+auto init(std::string romName) 						  				 -> Chip8;
+auto getDisplay(const Chip8& cpu) 									 -> std::vector<std::uint8_t>;
 
 // forward declarations for "opcodes.cpp"
 void op_00E0(Chip8& cpu, std::uint16_t opcode);
